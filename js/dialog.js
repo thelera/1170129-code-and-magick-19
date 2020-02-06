@@ -18,7 +18,7 @@
 
   var openWizardSetupDialog = function () {
     // импортируем изначальное положение окна настройки
-    if(window.move) {
+    if (window.move) {
       wizardSetupDialog.style.left = window.move.dialogStartX + 'px';
       wizardSetupDialog.style.top = window.move.dialogStartY + 'px';
     }
