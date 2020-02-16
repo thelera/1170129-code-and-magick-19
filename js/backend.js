@@ -1,5 +1,5 @@
 'use strict';
-
+// загрузка данных с сервера и на сервер с помощью ajax
 (function () {
   var status = {
     OK: {code: 200},
