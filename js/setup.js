@@ -3,18 +3,29 @@
 // окно настройки персонажа
 // создание похожих персонажей
 (function () {
-  var AMOUNT_OF_WIZARDS = 4;
   var COAT_COLORS = ['rgb(101, 137, 164)', 'rgb(241, 43, 107)', 'rgb(146, 100, 161)', 'rgb(56, 159, 117)', 'rgb(215, 210, 55)', 'rgb(0, 0, 0)'];
   var EYES_COLORS = ['black', 'red', 'blue', 'yellow', 'green'];
   var FIREBALL_COLORS = ['#ee4830', '#30a8ee', '#5ce6c0', '#e848d5', '#e6e848'];
 
-  var similarWizardTemplate = document.querySelector('#similar-wizard-template').content.querySelector('.setup-similar-item');
-  var similarWizardsList = document.querySelector('.setup-similar-list');
   var wizardSetupDialog = document.querySelector('.setup');
   var wizardSetupForm = document.querySelector('.setup-wizard-form');
 
-  var generateNumber = function (maxNumber) {
-    return Math.round(Math.random() * (maxNumber - 1));
+  var wizardCoat = wizardSetupDialog.querySelector('.wizard-coat');
+  var wizardCoatInput = wizardSetupDialog.querySelector('input[name="coat-color"]');
+
+  var wizardEyes = wizardSetupDialog.querySelector('.wizard-eyes');
+  var wizardEyesInput = wizardSetupDialog.querySelector('input[name="eyes-color"]');
+
+  var wizardFireball = wizardSetupDialog.querySelector('.setup-fireball-wrap');
+  var wizardFireballInput = wizardFireball.querySelector('input');
+
+  // начальные настройки мантии, глаз и фаербола игрока
+  window.setup = {
+    player: {
+      colorCoat: wizardCoat.style.fill,
+      colorEyes: EYES_COLORS[0],
+      colorFireball: wizardFireball.style.background
+    }
   };
 
   // отправка данных на сервер
@@ -41,45 +52,19 @@
   });
 
   // загрузка данных с сервера
-  var cloneWizard = function (wizard) {
-    var newWizard = similarWizardTemplate.cloneNode(true);
+  var allWizards;
+  var successHandler = function (wizards) {
+    allWizards = wizards;
+    window.sort(allWizards, window.setup.player);
 
-    newWizard.querySelector('.setup-similar-label').textContent = wizard.name;
-    newWizard.querySelector('.wizard-coat').style.fill = wizard.colorCoat;
-    newWizard.querySelector('.wizard-eyes').style.fill = wizard.colorEyes;
+    window.render(allWizards);
 
-    return newWizard;
+    window.colorize('colorFireball', wizardFireball, wizardFireballInput, FIREBALL_COLORS, allWizards);
+    window.colorize('colorCoat', wizardCoat, wizardCoatInput, COAT_COLORS, allWizards);
+    window.colorize('colorEyes', wizardEyes, wizardEyesInput, EYES_COLORS, allWizards);
   };
 
-  var loadHandler = function (wizards) {
-    var fragment = document.createDocumentFragment();
-    for (var i = 0; i < AMOUNT_OF_WIZARDS; i += 1) {
-      fragment.appendChild(cloneWizard(wizards[generateNumber(wizards.length)]));
-    }
-
-    similarWizardsList.appendChild(fragment);
-    wizardSetupDialog.querySelector('.setup-similar').classList.remove('hidden');
-  };
-
-  window.backend.load(loadHandler, errorHandler);
-
-  // изменение цвета мантии персонажа по нажатию
-  var wizardCoat = wizardSetupDialog.querySelector('.wizard-coat');
-  var wizardCoatInput = wizardSetupDialog.querySelector('input[name="coat-color"]');
-
-  window.colorize(wizardCoat, wizardCoatInput, COAT_COLORS);
-
-  // изменение цвета глаз персонажа по нажатию
-  var wizardEyes = wizardSetupDialog.querySelector('.wizard-eyes');
-  var wizardEyesInput = wizardSetupDialog.querySelector('input[name="eyes-color"]');
-
-  window.colorize(wizardEyes, wizardEyesInput, EYES_COLORS);
-
-  // изменение цвета фаерболов по нажатию
-  var wizardFireball = wizardSetupDialog.querySelector('.setup-fireball-wrap');
-  var wizardFireballInput = wizardFireball.querySelector('input');
-
-  window.colorize(wizardFireball, wizardFireballInput, FIREBALL_COLORS);
+  window.backend.load(successHandler, errorHandler);
 })();
 
 // var getJSONPData = function (data) {
