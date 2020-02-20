@@ -18,7 +18,7 @@
 
       input.value = randomColor;
       window.setup.player[key] = randomColor;
-      window.sort(wizards, window.setup.player);
+      window.sortByColor(wizards, window.setup.player);
 
       window.debounce(function () {
         window.render(wizards);

@@ -55,7 +55,7 @@
   var allWizards;
   var successHandler = function (wizards) {
     allWizards = wizards;
-    window.sort(allWizards, window.setup.player);
+    window.sortByColor(allWizards, window.setup.player);
 
     window.render(allWizards);
 
